@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -28,13 +27,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
-import org.apache.xmlrpc.common.XmlRpcStreamConfig;
-import org.apache.xmlrpc.parser.XmlRpcRequestParser;
-import org.apache.xmlrpc.util.SAXParsers;
-
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -43,9 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 /**
  * All methos for XML-RPC parsing/handling Sepcs:
@@ -57,33 +47,6 @@ import org.xml.sax.XMLReader;
 public class XmlRpcController implements Serializable {
 
     private static final Logger L = LoggerFactory.getLogger(XmlRpcController.class);
-
-    /**
-     * pars a given String in XML-RPC Format
-     *
-     * @param content
-     * @return XmlRpcRequestParser
-     */
-    public XmlRpcRequestParser parser(String content) {
-        XmlRpcRequestParser parser = null;
-        try {
-            XmlRpcStreamConfig config = new XmlRpcHttpRequestConfigImpl();
-            XmlRpcClient client = new XmlRpcClient();
-            parser = new XmlRpcRequestParser(config, client.getTypeFactory());
-
-            XMLReader xmlReader = SAXParsers.newXMLReader();
-            xmlReader.setContentHandler(parser);
-            xmlReader.parse(new InputSource(new StringReader(content)));
-        } catch (XmlRpcException ex) {
-            L.error("XmlRpcException on SAXParsers {}", ex.getMessage());
-        } catch (IOException ex) {
-            L.error("IOException on parse {}", ex.getMessage());
-        } catch (SAXException ex) {
-            L.error("SAXException on parse {}", ex.getMessage());
-        }
-
-        return parser;
-    }
 
     /**
      * getting the Error Code out of the XML-RPS Foprmate String
